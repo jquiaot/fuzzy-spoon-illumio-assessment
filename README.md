@@ -11,10 +11,12 @@ Task 1: Description: Write a program that reads a file and finds matches
 against a predefined set of words. There can be up to 10K entries in the list
 of predefined words. The output of the program should look something like this:
 
+```
 Predefined word           Match count 
 FirstName                        3500 
 LastName                         2700 
 Zipcode                          1601 
+```
 
 Requirement details:
 
@@ -48,6 +50,63 @@ If there is any aspect of the requirement or question is not clear, please make
 reasonable assumptions and document them in the README file to be submitted
 with the assignment.
 
-## Notes
+## Discussion
 
-TBD
+* Working with two files here:
+  * Word file (dictionary) - a list of words, one word per line, used to match
+	* Up to 10k words (entries)
+	* Constrain to alphanumeric characters, no spaces
+  * Content file - a file containing records, each record separated by a newline
+	* Up to 20MB
+	* Content appears to be arbitrary sentences or snippets, can be of any case,
+	  may contain punctuation, different case
+  * Word matching
+	* Whole words only
+	* Case-insensitive
+
+Initial thoughts on approach: Since we are looking at exact, case-insensitive
+matches only, and with a dictionary size of up to 10k, it's not unreasonable
+as a first approach to use a simple map/dict to count the number of occurrences
+of the words in our dictionary.
+
+If we wanted to do partial word matches, or if the number of words we need to
+match against was larger, we might want to explore using something like a prefix
+tree (trie) to capture the match words.
+
+Output appears to be in descending order from most to least number of occurrences,
+so we'll try to format the output accordingly.
+
+
+Test words generated from: https://randomwordgenerator.com/
+
+Test content/records generated from https://randomwordgenerator.com/sentence.php
+
+Basic algorithm outline:
+
+Dictionary generation:
+
+```
+* Parse word file line by line
+* For each word
+  * Convert to lowercase
+  * Add it to dictionary, and set its initial count to 0
+```
+
+Content processing:
+
+```
+* Take each record line by line
+* For each record
+  * Convert to lowercase (can probably also do this at the word level)
+  * Strip non-space punctuation
+  * Split into words using space char as split token
+    * For each word
+    * If word exists in dictionary, increment count
+```
+
+Output generation:
+
+```
+* Sort word/count pairs in dictionary by count in descending order
+* Output word and count
+```
