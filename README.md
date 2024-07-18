@@ -76,6 +76,8 @@ tree (trie) to capture the match words.
 Output appears to be in descending order from most to least number of occurrences,
 so we'll try to format the output accordingly.
 
+We'll count number of occurrences of each word throughout the entire corpus, rather
+than the number of records containing each word.
 
 Test words generated from: https://randomwordgenerator.com/
 
@@ -111,6 +113,23 @@ Output generation:
 * Output word and count
 ```
 
+Time complexity:
+
+- n = num words in word file
+- p = num records in record file
+- q = avg num words in each record in record file
+
+- Dictionary generation: O(n)
+- Parsing records and generating counts: O(p*q)
+  - O(1) word lookup to increment counter
+- Output generation: O(n*lg(n)) to sort by count descending and output all records
+- => O(p*q) assuming the records file is going to be the predominant factor
+
+Space complexity:
+
+- Counting and word dictionaries: O(n) each
+- => O(n)
+
 ## Initial Implementation: `count_words.py`
 
 This Python3 program takes as optional arguments a word file and a records file, and
@@ -130,9 +149,9 @@ how do you say a street name is not a first name?
 
 $ python3 count_words.py test1_words.txt test1_records.txt
 Predefined Word                         Match Count
-name                                             2
-ai                                               1
-detect                                           0
+Name                                             2
+AI                                               1
+Detect                                           0
 ```
 
 If no arguments are given, the program uses `words.txt` for the words file and
@@ -154,7 +173,40 @@ dictionary is then used when emitting the results.
 
 ## Test Cases
 
-Test 1: Testing the sample words and records as given in the problem.
-Test 2: Testing case insensitivity, whole word matching.
-Test 3: Testing reasonably long word.
-Test 4: Testing word of 256 characters.
+* Test 1: Testing the sample words and records as given in the problem.
+* Test 2: Testing case insensitivity, whole word matching.
+* Test 3: Testing reasonably long word.
+* Test 4: Testing word of 256 characters.
+
+## Closing Comments and Improvements
+
+If we wanted to do partial word matches, then we could employ something like a trie
+or prefix tree to do so.
+
+We could be better about generating "pretty" output by measuring the max string length
+and adjusting output format accordingly, but it would probably start looking really
+awkward with a mix of really long and really small input words. I chose 40 chars as
+a reasonable initial value.
+
+We count the total number of occurrences of a word throughout the corpus, so if a
+word appears multiple times in a given record, then we count the word that number
+of times, versus a single time for the matched record. If we just wanted the
+number of records containing the specified word, then rather than maintaining absolute
+counts, for each record, we would detect whether or not a word has occurred at least 
+once. For all words that appeared at least once in a record, we increment its count
+by 1 only.
+
+The method `process_record()` then might look something like:
+
+```python
+def process_record(records_fn: str, word_dict: dict[str, int]) -> None:
+	with open(records_fn) as f:
+		for record in f:
+			seen = set()
+			record = clean_record(record)
+			for word in record.split(' '):
+				if word in word_dict:
+					seen.add(word)
+	        for word in seen:
+				word_dict[word] += 1
+```
