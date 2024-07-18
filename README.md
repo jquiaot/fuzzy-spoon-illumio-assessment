@@ -210,3 +210,18 @@ def process_record(records_fn: str, word_dict: dict[str, int]) -> None:
 	        for word in seen:
 				word_dict[word] += 1
 ```
+
+If we only wanted the top-k words in the result set, then we can use a heap
+to peel off the k words we want. Rough algorithm would look something like:
+
+```
+- emit output
+  - create class to contain word and count, with custom __lt__() sort method
+  - convert word_dict into list of word and count objects - O(num words in dictionary)
+  - heapfiy list - O(n)
+  - pull top-k words - O(k)
+```
+
+This could result in significant time savings generating the output, especially
+if the number of total words is large but the number of top words we want 
+is small.
