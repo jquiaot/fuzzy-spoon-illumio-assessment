@@ -2,17 +2,23 @@ import sys
 import heapq
 
 """
-Creates a dictionary (map/dict) using words in the specified file. The file
-is expected to contain words, each separated by a newline. The words
-are expected to be alphanumeric only, no spaces or punctuation.
+Populates two dictionary data structures using words in the specified file.
+
+The "counting dictionary" `count_dict` maintains a map from lowercased
+word to count of occurrences, initialized to 0.
+
+The "word dictionary" `word_dict` maintains a map from the lowercased
+word to the original word as it appeared in the file. This is used
+for pretty-printing the output.
 """
-def create_dictionary(fn: str) -> dict[str, int]:
-    d = {}
+def create_dictionary(fn: str, count_dict: dict[str, int], word_dict: dict[str, str]) -> None:
     with open(fn) as f:
         for word in f:
             # remove leading/trailing whitespace, and lowercase it
-            d[word.strip().lower()] = 0
-    return d
+            word = word.strip()
+            clean_word = word.lower()
+            count_dict[clean_word] = 0
+            word_dict[clean_word] = word
 
 """
 Processes the records in the specified file against the specified dictionary,
@@ -46,13 +52,13 @@ def clean_record(record: str) -> str:
 Emit words and counts from the specified dictionary, descending order of counts. If
 include_zeroes == True, include words with counts of 0.
 """
-def emit_counts(d: dict[str, int], include_zeroes: bool = True) -> None:
-    words_and_counts = list(d.items())
+def emit_counts(count_dict: dict[str, int], word_dict: dict[str, str], include_zeroes: bool = True) -> None:
+    words_and_counts = list(count_dict.items())
     words_and_counts.sort(reverse = True, key = lambda wc: wc[1])
 
     print(f"{'Predefined Word' : <40}{'Match Count' : >10}")
     for wc in words_and_counts:
-        print(f"{wc[0] : <40}{wc[1] : >10}")
+        print(f"{word_dict[wc[0]] : <40}{wc[1] : >10}")
 
 if __name__ == '__main__':
     words_fn = "words.txt"
@@ -60,6 +66,10 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         words_fn = sys.argv[1]
         records_fn = sys.argv[2]
-    d = create_dictionary(words_fn)
-    process_records(records_fn, d)
-    emit_counts(d)
+    count_dict = {}
+    word_dict = {}
+    create_dictionary(words_fn, count_dict, word_dict)
+    process_records(records_fn, count_dict)
+    emit_counts(count_dict, word_dict)
+
+# END

@@ -137,3 +137,17 @@ detect                                           0
 
 If no arguments are given, the program uses `words.txt` for the words file and
 `records.txt` for the records file.
+
+## Improvements
+
+### Pretty-Printing Words
+
+The initial output emitted the lowercased words used for matching along with their
+counts. The sample output showed the original words and their counts, so in order
+to try to match this, we need to maintain the linkage between the original
+word as seen in the words file, and the word as it is used when counting in 
+records.
+
+Accordingly, in parsing the word file, an additional dictionary is created to
+maintain that mapping from the lowercased word to its original form. This
+dictionary is then used when emitting the results.
