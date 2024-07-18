@@ -100,7 +100,7 @@ Content processing:
   * Convert to lowercase (can probably also do this at the word level)
   * Strip non-space punctuation
   * Split into words using space char as split token
-    * For each word
+  * For each word
     * If word exists in dictionary, increment count
 ```
 
@@ -110,3 +110,30 @@ Output generation:
 * Sort word/count pairs in dictionary by count in descending order
 * Output word and count
 ```
+
+## Initial Implementation: `count_words.py`
+
+This Python3 program takes as optional arguments a word file and a records file, and
+outputs to stdout the words and the counts, in descending order by count.
+
+Example:
+
+```
+test1_words.txt:
+Name
+Detect
+AI
+
+test1_records.txt:
+Detecting first names is tricky to do even with AI.
+how do you say a street name is not a first name?
+
+$ python3 count_words.py test1_words.txt test1_records.txt
+Predefined Word                         Match Count
+name                                             2
+ai                                               1
+detect                                           0
+```
+
+If no arguments are given, the program uses `words.txt` for the words file and
+`records.txt` for the records file.
