@@ -54,15 +54,15 @@ with the assignment.
 
 * Working with two files here:
   * Word file (dictionary) - a list of words, one word per line, used to match
-	* Up to 10k words (entries)
-	* Constrain to alphanumeric characters, no spaces
+    * Up to 10k words (entries)
+    * Constrain to alphanumeric characters, no spaces
   * Content file - a file containing records, each record separated by a newline
-	* Up to 20MB
-	* Content appears to be arbitrary sentences or snippets, can be of any case,
-	  may contain punctuation, different case
+    * Up to 20MB
+    * Content appears to be arbitrary sentences or snippets, can be of any case,
+      may contain punctuation, different case
   * Word matching
-	* Whole words only
-	* Case-insensitive
+    * Whole words only
+    * Case-insensitive
 
 Initial thoughts on approach: Since we are looking at exact, case-insensitive
 matches only, and with a dictionary size of up to 10k, it's not unreasonable
@@ -200,15 +200,15 @@ The method `process_record()` then might look something like:
 
 ```python
 def process_record(records_fn: str, word_dict: dict[str, int]) -> None:
-	with open(records_fn) as f:
-		for record in f:
-			seen = set()
-			record = clean_record(record)
-			for word in record.split(' '):
-				if word in word_dict:
-					seen.add(word)
-	        for word in seen:
-				word_dict[word] += 1
+    with open(records_fn) as f:
+        for record in f:
+            seen = set()
+            record = clean_record(record)
+            for word in record.split(' '):
+                if word in word_dict:
+                    seen.add(word)
+            for word in seen:
+                word_dict[word] += 1
 ```
 
 If we only wanted the top-k words in the result set, then we can use a heap
@@ -219,7 +219,7 @@ to peel off the k words we want. Rough algorithm would look something like:
   - create class to contain word and count, with custom __lt__() sort method
   - convert word_dict into list of word and count objects - O(num words in dictionary)
   - heapfiy list - O(n)
-  - pull top-k words - O(k)
+  - pull top-k words - O(k*lg(n))
 ```
 
 This could result in significant time savings generating the output, especially
