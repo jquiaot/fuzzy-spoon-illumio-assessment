@@ -16,6 +16,8 @@ def create_dictionary(fn: str, count_dict: dict[str, int], word_dict: dict[str, 
         for word in f:
             # remove leading/trailing whitespace, and lowercase it
             word = word.strip()
+            if len(word) == 0:
+                continue
             clean_word = word.lower()
             count_dict[clean_word] = 0
             word_dict[clean_word] = word

@@ -151,3 +151,10 @@ records.
 Accordingly, in parsing the word file, an additional dictionary is created to
 maintain that mapping from the lowercased word to its original form. This
 dictionary is then used when emitting the results.
+
+## Test Cases
+
+Test 1: Testing the sample words and records as given in the problem.
+Test 2: Testing case insensitivity, whole word matching.
+Test 3: Testing reasonably long word.
+Test 4: Testing word of 256 characters.
